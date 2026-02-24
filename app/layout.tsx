@@ -19,6 +19,13 @@ export const metadata: Metadata = {
     "Une formation complète en ligne, des exercices pratiques et un accompagnement personnalisé pour atteindre vos objectifs.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{

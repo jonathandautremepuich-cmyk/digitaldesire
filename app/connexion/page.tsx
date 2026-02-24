@@ -54,7 +54,7 @@ export default function ConnexionPage() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-20 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 sm:py-20 relative overflow-hidden w-full max-w-[100vw] box-border">
       {/* Orbe décorative derrière le formulaire */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(100vw,520px)] h-[min(80vw,400px)] rounded-full opacity-40 pointer-events-none"
@@ -65,11 +65,11 @@ export default function ConnexionPage() {
       />
 
       <div
-        className="w-full max-w-[420px] relative animate-fade-up opacity-0"
+        className="w-full max-w-[420px] min-w-0 px-0 sm:px-0 relative animate-fade-up opacity-0 box-border"
         style={{ animationDelay: "0.05s", animationFillMode: "forwards" }}
       >
         <div
-          className="relative rounded-[var(--radius-xl)] p-8 sm:p-10 overflow-hidden transition-all duration-300"
+          className="relative rounded-[var(--radius-xl)] p-5 sm:p-10 overflow-hidden transition-all duration-300 w-full max-w-[100%] box-border"
           style={{
             background: "var(--bg-glass)",
             backdropFilter: "blur(20px)",

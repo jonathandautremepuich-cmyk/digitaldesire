@@ -61,9 +61,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url: session.url });
   } catch (err) {
+    const message = err instanceof Error ? err.message : "Erreur Stripe inconnue";
     console.error("Stripe checkout session error:", err);
     return NextResponse.json(
-      { error: "Erreur lors de la création du paiement." },
+      {
+        error:
+          "Erreur lors de la création du paiement. Vérifiez STRIPE_SECRET_KEY et les IDs de prix (price_...) dans .env.local. Détail : " +
+          message,
+      },
       { status: 500 }
     );
   }

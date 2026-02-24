@@ -79,7 +79,7 @@ export default function Home() {
 
       <header className="header">
         <nav className="nav">
-          <Link href="/" className="text-lg font-bold tracking-tight text-[var(--text)] shrink-0">
+          <Link href="/" className="text-base sm:text-lg font-bold tracking-tight text-[var(--text)] shrink-0 min-w-0 truncate max-w-[50vw] sm:max-w-none">
             Digital<span className="text-[var(--accent)]"> Desire</span>
           </Link>
           <ul className="nav-links">
@@ -90,16 +90,17 @@ export default function Home() {
             {username ? (
               <>
                 {isMember && <li className="md:hidden"><Link href="/acces">Ma Formation</Link></li>}
-                <li className="md:hidden">
+                <li className="md:hidden min-w-0 flex-1 basis-full">
                   <span
-                    className="inline-flex items-center gap-2 rounded-xl text-sm font-medium border-2 border-[var(--accent)] bg-transparent text-[var(--text)] overflow-hidden"
+                    className="inline-flex items-center min-w-0 max-w-full rounded-xl text-sm font-medium border-2 border-[var(--accent)] bg-transparent text-[var(--text)] overflow-hidden"
                     title={`Connecté : ${username}`}
                   >
-                    <span className="inline-flex items-center gap-2 pl-3 py-2">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-                      {username}
+                    <span className="inline-flex items-center gap-2 pl-3 py-2 min-w-0 flex-1">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden className="shrink-0"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                      <span className="truncate">{username}</span>
                     </span>
-                    <span className={`inline-flex items-center px-3 py-2 text-xs font-semibold whitespace-nowrap ${isMember ? "bg-[var(--accent-soft)] text-[var(--accent)]" : "bg-[var(--bg-elevated)] text-[var(--text-muted)]"}`}>
+                    <span className="w-1 self-stretch min-h-6 bg-[var(--accent)] shrink-0 rounded-full" aria-hidden />
+                    <span className={`inline-flex items-center px-3 py-2 text-xs font-semibold whitespace-nowrap shrink-0 ${isMember ? "bg-[var(--accent-soft)] text-[var(--accent)]" : "bg-[var(--bg-elevated)] text-[var(--text-muted)]"}`}>
                       {isMember ? "Membre" : "Non Membre"}
                     </span>
                   </span>
@@ -133,6 +134,7 @@ export default function Home() {
                   </span>
                   {username}
                 </span>
+                <span className="w-1 self-stretch min-h-6 bg-[var(--accent)] shrink-0 rounded-full" aria-hidden />
                 <span className={`inline-flex items-center py-2.5 px-3.5 text-xs font-semibold whitespace-nowrap ${isMember ? "bg-[var(--accent-soft)] text-[var(--accent)]" : "bg-[var(--bg-elevated)] text-[var(--text-muted)]"}`}>
                   {isMember ? "Membre" : "Non Membre"}
                 </span>
@@ -175,9 +177,9 @@ export default function Home() {
         </nav>
       </header>
 
-      <main>
+      <main className="overflow-x-hidden">
         {/* Hero */}
-        <section className="hero relative min-h-[90vh] flex items-center pt-28 pb-20 px-0" aria-label="Accroche">
+        <section className="hero relative min-h-[85vh] sm:min-h-[90vh] flex items-center pt-24 pb-16 sm:pt-28 sm:pb-20 px-0" aria-label="Accroche">
           <div className="hero-bg" aria-hidden />
           <div className="container relative text-center">
             <p className="hero-badge">Formation 100 % en ligne</p>

@@ -166,8 +166,8 @@ function CheckoutContent() {
 
   if (step === "account") {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-20">
-        <div className="w-full max-w-md bg-[var(--bg-card)] border border-[var(--border)] rounded-[var(--radius-lg)] p-8">
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 sm:py-20 w-full max-w-[100vw] box-border overflow-x-hidden">
+        <div className="w-full max-w-md min-w-0 bg-[var(--bg-card)] border border-[var(--border)] rounded-[var(--radius-lg)] p-5 sm:p-8 box-border">
           <Link
             href="/#tarifs"
             className="text-sm text-[var(--text-muted)] hover:text-[var(--accent)] mb-6 inline-block"
@@ -244,18 +244,14 @@ function CheckoutContent() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-20">
-      <div className="w-full max-w-md bg-[var(--bg-card)] border border-[var(--border)] rounded-[var(--radius-lg)] p-8">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 sm:py-20 w-full max-w-[100vw] box-border overflow-x-hidden">
+      <div className="w-full max-w-md min-w-0 bg-[var(--bg-card)] border border-[var(--border)] rounded-[var(--radius-lg)] p-5 sm:p-8 box-border">
         <Link
           href="/#tarifs"
           className="text-sm text-[var(--text-muted)] hover:text-[var(--accent)] mb-6 inline-block"
         >
           ← Retour aux offres
         </Link>
-        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent)] mb-4">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-          <span className="text-[var(--text)] font-semibold">{username}</span>
-        </span>
         <h1 className="font-[family-name:var(--font-playfair)] text-2xl font-bold mb-2">
           Finaliser l&apos;accès
         </h1>

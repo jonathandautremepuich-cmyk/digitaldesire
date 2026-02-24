@@ -99,12 +99,12 @@ export default function AccesPage() {
       {/* Espace en haut pour pouvoir défiler jusqu'en haut */}
       <div className="h-20 shrink-0" aria-hidden />
       <header className="header">
-        <nav className="nav max-w-[1100px] mx-auto px-6 py-4 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+        <nav className="nav max-w-[1100px] mx-auto px-4 sm:px-6 py-3 sm:py-4 grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-4 min-w-0">
           <div className="min-w-0" />
-          <Link href="/" className="text-3xl font-bold tracking-tight text-[var(--text)] justify-self-center shrink-0">
+          <Link href="/" className="text-xl sm:text-3xl font-bold tracking-tight text-[var(--text)] justify-self-center shrink-0 min-w-0 truncate max-w-[45vw] sm:max-w-none">
             Digital<span className="text-[var(--accent)]"> Desire</span>
           </Link>
-          <div className="flex items-center justify-end gap-4 pr-8">
+          <div className="flex items-center justify-end gap-2 sm:gap-4 pr-0 sm:pr-8 min-w-0">
             <Link href="/" className="text-sm font-medium text-[#fff] py-2.5 px-3.5 border-2 border-[var(--accent)] rounded-xl bg-transparent hover:bg-[var(--accent-soft)] hover:border-[var(--accent-hover)] transition-colors">
               Retour à l&apos;accueil
             </Link>
@@ -112,8 +112,8 @@ export default function AccesPage() {
         </nav>
       </header>
 
-      <main className="container pt-24 pb-20">
-        <div className="max-w-2xl mx-auto">
+      <main className="container pt-20 sm:pt-24 pb-12 sm:pb-20 overflow-x-hidden">
+        <div className="max-w-2xl mx-auto min-w-0 w-full">
           {showPaymentSuccess ? (
             <>
               {/* Bloc succès — affiché une seule fois après le paiement */}
