@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doodle Jump</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #1a1a2e;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    #game-container {
+      position: relative;
+      width: 400px;
+      height: 600px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    #canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #16213e 0%, #0f3460 50%, #1a1a2e 100%);
+    }
+    #score {
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 24px;
+      font-weight: 700;
+      color: #e94560;
+      text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+      z-index: 2;
+    }
+    #game-over {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 10;
+    }
+    #game-over.visible { display: flex; }
+    #game-over h2 { color: #e94560; font-size: 36px; }
+    #game-over p { color: #eee; font-size: 20px; }
+    #restart {
+      padding: 12px 28px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      background: #e94560;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #restart:hover { background: #ff6b6b; }
+    #instructions {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="canvas"></canvas>
+    <div id="score">0</div>
+    <div id="game-over">
+      <h2>Game Over</h2>
+      <p id="final-score">Score : 0</p>
+      <button id="restart">Rejouer</button>
+    </div>
+    <div id="instructions">← → ou A D pour bouger</div>
+  </div>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const gameOverEl = document.getElementById('game-over');
+    const finalScoreEl = document.getElementById('final-score');
+    const restartBtn = document.getElementById('restart');
+
+    const W = 400, H = 600;
+    canvas.width = W;
+    canvas.height = H;
+
+    const GRAVITY = 0.45, JUMP_FORCE = -14, MOVE_SPEED = 6;
+    const PLATFORM_WIDTH = 70, PLATFORM_HEIGHT = 14;
+    const PLATFORM_GAP_Y_MIN = 50, PLATFORM_GAP_Y_MAX = 120;
+    const DOODLE_SIZE = 36;
+
+    let player = { x: W/2 - DOODLE_SIZE/2, y: H - 120, vy: 0, vx: 0, width: DOODLE_SIZE, height: DOODLE_SIZE };
+    let platforms = [], cameraY = 0, score = 0, bestScore = 0, gameRunning = true;
+    let keys = { left: false, right: false };
+
+    function randomBetween(a, b) { return a + Math.random() * (b - a); }
+    function createPlatform(x, y, type) { return { x, y, w: PLATFORM_WIDTH, h: PLATFORM_HEIGHT, type: type || 'normal' }; }
+
+    function generatePlatformsUpTo(minY) {
+      const lastP = platforms[platforms.length - 1];
+      let lastY = lastP ? lastP.y : player.y - 80;
+      let lastX = lastP ? lastP.x : W/2 - PLATFORM_WIDTH/2;
+      while (lastY > minY - H) {
+        lastY -= randomBetween(PLATFORM_GAP_Y_MIN, PLATFORM_GAP_Y_MAX);
+        lastX = lastX + randomBetween(-100, 100);
+        lastX = Math.max(0, Math.min(W - PLATFORM_WIDTH, lastX));
+        const roll = Math.random();
+        platforms.push(createPlatform(lastX, lastY, roll < 0.2 ? 'moving' : roll < 0.4 ? 'breakable' : 'normal'));
+      }
+    }
+
+    function initPlatforms() {
+      platforms = [];
+      const firstY = player.y - 60;
+      platforms.push(createPlatform(W/2 - PLATFORM_WIDTH/2, firstY, 'normal'));
+      generatePlatformsUpTo(player.y - H * 2);
+    }
+
+    function drawDoodle() {
+      const screenY = player.y - cameraY;
+      if (screenY < -DOODLE_SIZE || screenY > H + DOODLE_SIZE) return;
+      ctx.fillStyle = '#ffd93d';
+      ctx.beginPath();
+      ctx.ellipse(player.x + player.width/2, screenY + player.height/2, player.width/2, player.height/2, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle = '#b8860b';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function drawPlatform(p) {
+      const screenY = p.y - cameraY;
+      if (screenY < -PLATFORM_HEIGHT || screenY > H + PLATFORM_HEIGHT || p.removed) return;
+      const colors = { normal: ['#4ade80','#22c55e'], moving: ['#60a5fa','#3b82f6'], breakable: ['#d4a574','#a0785a'] };
+      const c = colors[p.type] || colors.normal;
+      ctx.fillStyle = c[0];
+      ctx.strokeStyle = c[1];
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(p.x, screenY, p.w, p.h, 4);
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    let movePhase = 0;
+    function updateMovingPlatforms() {
+      movePhase += 0.02;
+      platforms.forEach(function(p) {
+        if (p.type !== 'moving' || p.removed) return;
+        var baseX = p.baseX != null ? p.baseX : p.x;
+        p.baseX = baseX;
+        p.x = Math.max(0, Math.min(W - PLATFORM_WIDTH, baseX + Math.sin(movePhase + p.y*0.01) * 40));
+      });
+    }
+
+    function checkPlatformCollision() {
+      const footY = player.y + player.height, footCenterX = player.x + player.width/2;
+      if (player.vy <= 0) return;
+      for (var i = 0; i < platforms.length; i++) {
+        var p = platforms[i];
+        if (p.removed) continue;
+        if (footY >= p.y - 4 && footY <= p.y + p.h + 10 &&
+            footCenterX >= p.x - 5 && footCenterX <= p.x + p.w + 5) {
+          player.vy = JUMP_FORCE;
+          if (p.type === 'breakable') p.removed = true;
+          return;
+        }
+      }
+    }
+
+    function updateScore() {
+      var h = Math.max(0, Math.floor((H - 120 - player.y) / 2));
+      if (h > bestScore) bestScore = h;
+      score = bestScore;
+      scoreEl.textContent = score;
+    }
+
+    function gameOver() {
+      gameRunning = false;
+      finalScoreEl.textContent = 'Score : ' + score;
+      gameOverEl.classList.add('visible');
+    }
+
+    function update(dt) {
+      if (!gameRunning) return;
+      if (keys.left) player.vx = -MOVE_SPEED;
+      else if (keys.right) player.vx = MOVE_SPEED;
+      else player.vx = 0;
+      player.x += player.vx * (dt/16);
+      player.vy += GRAVITY * (dt/16);
+      if (player.x < -player.width/2) player.x = W - player.width/2;
+      if (player.x + player.width > W + player.width/2) player.x = -player.width/2 + player.width/2;
+      checkPlatformCollision();
+      updateMovingPlatforms();
+      player.y += player.vy * (dt/16);
+      if (player.y - cameraY > H * 0.6) cameraY = player.y - H * 0.6;
+      generatePlatformsUpTo(player.y);
+      updateScore();
+      if (player.y - cameraY > H + 50) gameOver();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      platforms.forEach(drawPlatform);
+      drawDoodle();
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
+      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
+    });
+    document.addEventListener('keyup', function(e) {
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
+      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
+    });
+
+    restartBtn.addEventListener('click', function() {
+      gameOverEl.classList.remove('visible');
+      gameRunning = true;
+      player.x = W/2 - DOODLE_SIZE/2;
+      player.y = H - 120;
+      player.vy = 0;
+      player.vx = 0;
+      cameraY = 0;
+      bestScore = score;
+      initPlatforms();
+      lastTime = performance.now();
+    });
+
+    var lastTime = performance.now();
+    function loop(now) {
+      update(now - lastTime);
+      lastTime = now;
+      draw();
+      requestAnimationFrame(loop);
+    }
+    initPlatforms();
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>

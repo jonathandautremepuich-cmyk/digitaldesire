@@ -1,0 +1,20 @@
+STEAL A BRAINROT - Design complet (style spec)
+
+1. ServerScriptService : UN Script -> coller tout COLLER_SERVEUR.lua
+2. StarterGui : UN LocalScript -> coller tout COLLER_CLIENT.lua
+3. Supprimer "MapJeu" dans Workspace si ancienne map, puis lancer.
+
+SYSTEMES INCLUS
+- Lobby + 8 bases : chaque joueur a une base avec Core (or), Spawner (machine violette), Vault (zone depot), StealPad (rouge), zone Safe autour du spawn.
+- Spawner : genere des Brainrots avec taux (Common 70%, Rare 20%, Epic 8%, Legendary 1.8%, Mythic 0.2%). [E] sur un Brainrot au Spawner = saisir.
+- Brainrots : ID unique, rarete, valeur, income/s, poids (ralentit le port), traits (VIP x2 income, Squeaky, Slippery, Cursed).
+- Vault : depose en zone Vault puis [E] sur "Deposer [E] Vault" = Brainrot en vault -> income actif. Capacite augmentable (Upgrade Vault).
+- Vol : va dans une base adverse (hors zone safe), [E] sur StealPad = vole le 1er Brainrot du vault. StolenState 45s (pas d'income, marque). Porte-le a ta base et depose en Vault -> apres 45s income.
+- Chase : si le proprietaire touche le voleur avant depot, le Brainrot revient au proprietaire, voleur malus 10s (ralenti + ne peut pas voler).
+- Safe Zone : autour du spawn, pas de vol.
+- New player shield : 10 min inviolable.
+- Raid limit : max 3 Brainrots voles par 5 min par meme victime.
+- Panic : bouton PANIC 30s = base fermee 30s.
+- Upgrades : Spawner (vitesse + rarete), Vault (capacite).
+
+UI : Coins, coins/s, Vault x/y, Spawner niv., boutons Upgrade Spawner/Vault, PANIC, journal (droite), [Tab] classement.
